@@ -1,5 +1,9 @@
 package edu.handong.csee.java.examples;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -12,27 +16,30 @@ public class Runner {
 	String path;
 	boolean verbose;
 	boolean help;
-
-	public static void main(String[] args) {
+	String fullpath;
+	
+	public static void main(String[] args) throws IOException {
 
 		Runner myRunner = new Runner();
 		myRunner.run(args);
 
 	}
 
-	private void run(String[] args) {
+	private void run(String[] args) throws IOException {
 		Options options = createOptions();
-		
+	    
 		if(parseOptions(options, args)){
 			if (help){
 				printHelp(options);
 				return;
 			}
-			
+			File hh = new File(path);
+			fullpath = hh.getAbsolutePath();
 			// path is required (necessary) data so no need to have a branch.
 			System.out.println("You provided \"" + path + "\" as the value of the option p");
-			
+			System.out.println("You provided \"" + fullpath + "\" as the value of the option p");
 			// TODO show the number of files in the path
+			//Paths.
 			
 			if(verbose) {
 				
@@ -53,6 +60,7 @@ public class Runner {
 			path = cmd.getOptionValue("p");
 			verbose = cmd.hasOption("v");
 			help = cmd.hasOption("h");
+			fullpath = cmd.getOptionValue("f");
 
 		} catch (Exception e) {
 			printHelp(options);
@@ -86,6 +94,13 @@ public class Runner {
 		options.addOption(Option.builder("h").longOpt("help")
 		        .desc("Help")
 		        .build());
+		
+		options.addOption(Option.builder("f").longOpt("fullpath")
+				.desc("Print full path of the files")
+				.hasArg()
+				.argName("Full path name to display")
+				//.required()
+				.build());
 
 		return options;
 	}
